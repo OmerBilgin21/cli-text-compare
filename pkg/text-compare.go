@@ -42,7 +42,6 @@ func TextCompare() {
 
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader([]string{"Text One", "Text Two"})
-	a := []string{longerStr, shorterStr}
-	table.Append(a)
+	table.Append([]string{longerStr, shorterStr})
 	table.Render()
 }
