@@ -1,14 +1,14 @@
 package pkg
 
 import (
-	// "bufio"
 	"cli-text-compare/internal"
 	"fmt"
 	"io"
 	"log"
 	"os"
 	"strings"
-	// "github.com/eiannone/keyboard"
+
+	"github.com/olekukonko/tablewriter"
 )
 
 var Red = "\033[31m"
@@ -37,15 +37,12 @@ func TextCompare() {
 
 	oneArr := strings.Split(strInOne, "\n")
 	twoArr := strings.Split(strInTwo, "\n")
-	if len(twoArr) > len(oneArr) {
-		DiffStr(&twoArr, &oneArr)
+	longer, shorter := internal.GetBiggerArray(twoArr, oneArr)
+	longerStr, shorterStr := MyersTrial(&longer, &shorter)
 
-	} else {
-		DiffStr(&oneArr, &twoArr)
-	}
-
-	diffedOne := strings.Join(oneArr, "\n")
-	diffedTwo := strings.Join(twoArr, "\n")
-
-	fmt.Println(fmt.Sprintf("Diff: \n\n%s\n\n%s", diffedOne, diffedTwo))
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"Text One", "Text Two"})
+	a := []string{longerStr, shorterStr}
+	table.Append(a)
+	table.Render()
 }
