@@ -2,36 +2,43 @@ package pkg
 
 import (
 	"strings"
-	_ "strings"
 )
 
-var Red = "\033[31m"
-var Green = "\033[32m"
-var Reset = "\033[0m"
+const (
+	Red       = "\033[31m"
+	Green     = "\033[32m"
+	BoldRed   = "\033[1;31m"
+	BoldGreen = "\033[1;32m"
+	Reset     = "\033[0m"
+)
 
-func ColourTheDiffs(
-	additions []Coordinate,
-	deletions []Coordinate,
-	oldStr string,
-	newStr string,
-) (string, string) {
-	// for deletions I have to look at the changing Y
-	// for additions I have to look at the changing X
-	oldArr, newArr := strings.Split(oldStr, ""), strings.Split(newStr, "")
+func ColourTheDiffs(oldStr, newStr string, actions []Action) string {
+	alt := strings.Split(oldStr, "")
+	neu := strings.Split(newStr, "")
+	i, j := 0, 0
+	var out []string
 
-	for _, addition := range additions {
-		xPos := addition.startX
-		if xPos < len(newArr) {
-			newArr[xPos] = Green + newArr[xPos] + Reset
+	for _, action := range actions {
+		switch action {
+		case ActionMatch:
+			out = append(out, alt[i])
+			i++
+			j++
+		case ActionDelete:
+			out = append(out, Red+alt[i]+Reset)
+			i++
+		case ActionInsert:
+			out = append(out, Green+neu[j]+Reset)
+			j++
+		case ActionSubstitute:
+			// well I used BoldRed and BoldGreen for showing
+			// substitute old and substitute new changes
+			// but it's not the best to say the least, open for ideas
+			out = append(out, BoldRed+alt[i]+Reset, BoldGreen+neu[j]+Reset)
+			i++
+			j++
 		}
 	}
 
-	for _, deletion := range deletions {
-		yPos := deletion.startY
-		if yPos < len(oldArr) {
-			oldArr[yPos] = Red + oldArr[yPos] + Reset
-		}
-	}
-
-	return strings.Join(oldArr, ""), strings.Join(newArr, "")
+	return strings.Join(out, "")
 }
