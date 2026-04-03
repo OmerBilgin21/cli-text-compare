@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"slices"
 )
 
 func TextCompare() {
@@ -22,6 +23,10 @@ func TextCompare() {
 	newStr := string(inputTwo)
 
 	actions := Diff(oldStr, newStr)
+	if slices.Compare(actions, slices.Repeat([]Action{ActionMatch}, len(actions))) == 0 {
+		fmt.Println("\nthe texts are the same")
+		return
+	}
 	colored := ColourTheDiffs(oldStr, newStr, actions)
 	fmt.Println("\nresult:")
 	fmt.Printf(colored)
