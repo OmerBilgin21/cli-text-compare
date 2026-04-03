@@ -1,12 +1,13 @@
 APP_NAME = textdiff
 VERSION  = v2.0.0
-BIN_DIR  = bin
+BIN_DIR  = ./bin
 
-.PHONY: clean
+.PHONY: clean test
+
+test:
+	go test ./test/ -v
 
 all: clean build zip
-
-# ----- Build section -----
 
 build: $(BIN_DIR)/$(APP_NAME)-linux-amd64 \
        $(BIN_DIR)/$(APP_NAME)-linux-arm64 \
@@ -35,8 +36,6 @@ $(BIN_DIR)/$(APP_NAME)-win-amd64.exe: $(BIN_DIR)
 
 $(BIN_DIR)/$(APP_NAME)-win-arm64.exe: $(BIN_DIR)
 	GOOS=windows GOARCH=arm64 go build -o $@ ./cmd/main.go
-
-# ----- Zip section -----
 
 zip: $(BIN_DIR)/$(APP_NAME)-linux-amd64.zip \
      $(BIN_DIR)/$(APP_NAME)-linux-arm64.zip \
