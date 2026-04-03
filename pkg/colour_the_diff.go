@@ -25,16 +25,35 @@ func ColourTheDiffs(oldStr, newStr string, actions []Action) string {
 			i++
 			j++
 		case ActionDelete:
-			out = append(out, Red+alt[i]+Reset)
+			if alt[i] == "\n" {
+				out = append(out, Red+"-newline-"+alt[i]+Reset)
+			} else {
+				out = append(out, Red+alt[i]+Reset)
+			}
 			i++
 		case ActionInsert:
-			out = append(out, Green+neu[j]+Reset)
+			if neu[j] == "\n" {
+				out = append(out, Green+"-newline-"+neu[j]+Reset)
+			} else {
+				out = append(out, Green+neu[j]+Reset)
+			}
 			j++
 		case ActionSubstitute:
 			// well I used BoldRed and BoldGreen for showing
 			// substitute old and substitute new changes
 			// but it's not the best to say the least, open for ideas
-			out = append(out, BoldRed+alt[i]+Reset, BoldGreen+neu[j]+Reset)
+
+			if alt[i] == "\n" || neu[j] == "\n" {
+				if alt[i] == "\n" {
+					out = append(out, BoldRed+"-newline-"+alt[i]+Reset, BoldGreen+neu[j]+Reset)
+				}
+				if neu[j] == "\n" {
+					out = append(out, BoldRed+alt[i]+Reset, BoldGreen+"-newline-"+neu[j]+Reset)
+				}
+			} else {
+				out = append(out, BoldRed+alt[i]+Reset, BoldGreen+neu[j]+Reset)
+			}
+
 			i++
 			j++
 		}
