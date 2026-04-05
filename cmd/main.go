@@ -5,42 +5,60 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"slices"
+	"strings"
 )
 
 func main() {
+	args := os.Args[1:]
 	fileModUsage := "usage: clidiff --file ./relative/path.json /absolute/path.json"
-	stdinUsage := "usage: clidiff --stdin"
-	usage := "Run the tool either with --stdin or with --file arguments to get the diff of two things.\nIf you pass no flags, blank comparison mode (--stdin) will run\n"
+	stdinUsage := "usage: clidiff or clidiff --stdin"
+	diffWidthUsage := "usage: clidiff --diff-width 75"
+	usage := "Run the tool either with --stdin or with --file arguments to get the diff of two things.\nIf you pass no flags, blank comparison mode (--stdin) will run\nTo change the width of the rendered diffs, pass --diff-width X\n"
 
-	stdinMode := flag.Bool("stdin", false, stdinUsage)
 	fileMode := flag.Bool("file", false, fileModUsage)
-	helpMode := flag.Bool("help", false, usage)
+	diffWidth := flag.Int("diff-width", 50, diffWidthUsage)
+	flag.Bool("help", false, usage)
+	flag.Bool("stdin", false, stdinUsage)
+
+	flagHelpWasAsked := false
+	if slices.Contains(args, "--help") {
+		for _, arg := range args {
+			if strings.Contains(arg, "stdin") {
+				flagHelpWasAsked = true
+				fmt.Println(stdinUsage)
+				os.Exit(0)
+			}
+
+			if strings.Contains(arg, "file") {
+				flagHelpWasAsked = true
+				fmt.Println(fileModUsage)
+				os.Exit(0)
+			}
+
+			if strings.Contains(arg, "diff-width") {
+				flagHelpWasAsked = true
+				fmt.Println(diffWidthUsage)
+				os.Exit(0)
+			}
+		}
+
+		if !flagHelpWasAsked {
+			fmt.Printf(usage)
+			os.Exit(0)
+		}
+	}
 
 	flag.Parse()
 
-	if *helpMode {
-		if *stdinMode {
-			fmt.Println(stdinUsage)
-			os.Exit(0)
-		}
-
-		if *fileMode {
-			fmt.Println(fileModUsage)
-			os.Exit(0)
-		}
-
-		fmt.Printf(usage)
-		os.Exit(0)
-	}
-
 	if *fileMode {
-		if len(flag.Args()) != 2 {
+		if len(flag.Args()) < 2 {
 			fmt.Println(fileModUsage)
 			fmt.Printf(string(pkg.Red))
 			os.Exit(1)
 		}
 
-		err := pkg.TextCompare(*fileMode, &flag.Args()[0], &flag.Args()[1])
+		err := pkg.TextCompare(*fileMode, &flag.Args()[0], &flag.Args()[1], *diffWidth)
 
 		if err != nil {
 			fmt.Printf("error while diffing: %+v", err)
@@ -50,7 +68,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	err := pkg.TextCompare(*fileMode, nil, nil)
+	err := pkg.TextCompare(*fileMode, nil, nil, *diffWidth)
 
 	if err != nil {
 		fmt.Printf("error while diffing: %+v", err)
