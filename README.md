@@ -1,6 +1,6 @@
-# CLI Text Compare Tool (textdiff)
+# CLI Compare Tool
 
-A text diffing tool that you can be %100 sure that it doesn't save anything to anywhere.
+A diffing tool that you can be %100 sure that it doesn't save anything to anywhere.
 A Golang learning project for me.
 Does not and will not have any dependencies other than Go stdlib.
 
