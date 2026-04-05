@@ -40,9 +40,20 @@ func main() {
 			os.Exit(1)
 		}
 
-		pkg.TextCompare(*fileMode, &flag.Args()[0], &flag.Args()[1])
+		err := pkg.TextCompare(*fileMode, &flag.Args()[0], &flag.Args()[1])
+
+		if err != nil {
+			fmt.Printf("error while diffing: %+v", err)
+			os.Exit(1)
+		}
+
 		os.Exit(0)
 	}
 
-	pkg.TextCompare(*fileMode, nil, nil)
+	err := pkg.TextCompare(*fileMode, nil, nil)
+
+	if err != nil {
+		fmt.Printf("error while diffing: %+v", err)
+		os.Exit(1)
+	}
 }
