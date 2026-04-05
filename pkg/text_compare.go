@@ -14,20 +14,18 @@ func TextCompare() {
 	if err != nil {
 		panic(err)
 	}
-	oldStr := string(inputOne)
 
 	inputTwo, err := io.ReadAll(os.Stdin)
 	if err != nil {
 		panic(err)
 	}
-	newStr := string(inputTwo)
 
-	actions := Diff(oldStr, newStr)
+	actions := Diff(inputOne, inputTwo)
 	if slices.Compare(actions, slices.Repeat([]Action{ActionMatch}, len(actions))) == 0 {
 		fmt.Println("\nthe texts are the same")
 		return
 	}
-	colored := ColourTheDiffs(oldStr, newStr, actions)
+	colored := ColourTheDiffs(inputOne, inputTwo, actions)
 	fmt.Println("\nresult:")
-	fmt.Printf(colored)
+	fmt.Printf(string(colored))
 }
