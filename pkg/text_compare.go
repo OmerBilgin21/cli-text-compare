@@ -11,7 +11,7 @@ func readOrExit(path string) []byte {
 	data, err := os.ReadFile(path)
 
 	if err != nil {
-		fmt.Printf(string(Red)+"error while reading the file: %+v\n"+string(Reset), err)
+		fmt.Printf(string(Red)+"error while reading the file: %+v\n", err)
 		os.Exit(1)
 	}
 

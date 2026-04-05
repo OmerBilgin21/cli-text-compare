@@ -33,14 +33,10 @@ func main() {
 		os.Exit(0)
 	}
 
-	if !*stdinMode && !*fileMode {
-		fmt.Println(usage)
-		os.Exit(1)
-	}
-
 	if *fileMode {
 		if len(flag.Args()) != 2 {
 			fmt.Println(fileModUsage)
+			fmt.Printf(string(pkg.Red))
 			os.Exit(1)
 		}
 

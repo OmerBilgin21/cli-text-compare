@@ -1,4 +1,4 @@
-APP_NAME = textdiff
+APP_NAME = clidiff
 VERSION  = v2.0.0
 BIN_DIR  = ./bin
 
