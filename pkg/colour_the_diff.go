@@ -1,22 +1,25 @@
 package pkg
 
-import (
-	"strings"
+var (
+	Red       = []byte("\033[31m")
+	Green     = []byte("\033[32m")
+	BoldRed   = []byte("\033[1;31m")
+	BoldGreen = []byte("\033[1;32m")
+	Reset     = []byte("\033[0m")
 )
 
-const (
-	Red       = "\033[31m"
-	Green     = "\033[32m"
-	BoldRed   = "\033[1;31m"
-	BoldGreen = "\033[1;32m"
-	Reset     = "\033[0m"
-)
+func returnByteSum(args ...[]byte) []byte {
+	var sum []byte
+	for _, arg := range args {
+		sum = append(sum, arg...)
+	}
+	return sum
+}
 
-func ColourTheDiffs(oldStr, newStr string, actions []Action) string {
-	alt := strings.Split(oldStr, "")
-	neu := strings.Split(newStr, "")
+func ColourTheDiffs(alt, neu []byte, actions []Action) []byte {
 	i, j := 0, 0
-	var out []string
+	var out []byte
+	newLine := []byte("-newline-")
 
 	for _, action := range actions {
 		switch action {
@@ -25,17 +28,17 @@ func ColourTheDiffs(oldStr, newStr string, actions []Action) string {
 			i++
 			j++
 		case ActionDelete:
-			if alt[i] == "\n" {
-				out = append(out, Red+"-newline-"+alt[i]+Reset)
+			if alt[i] == '\n' {
+				out = append(out, returnByteSum(Red, newLine, []byte{alt[i]}, Reset)...)
 			} else {
-				out = append(out, Red+alt[i]+Reset)
+				out = append(out, returnByteSum(Red, []byte{alt[i]}, Reset)...)
 			}
 			i++
 		case ActionInsert:
-			if neu[j] == "\n" {
-				out = append(out, Green+"-newline-"+neu[j]+Reset)
+			if neu[j] == '\n' {
+				out = append(out, returnByteSum(Green, newLine, []byte{neu[j]}, Reset)...)
 			} else {
-				out = append(out, Green+neu[j]+Reset)
+				out = append(out, returnByteSum(Green, []byte{neu[j]}, Reset)...)
 			}
 			j++
 		case ActionSubstitute:
@@ -43,15 +46,15 @@ func ColourTheDiffs(oldStr, newStr string, actions []Action) string {
 			// substitute old and substitute new changes
 			// but it's not the best to say the least, open for ideas
 
-			if alt[i] == "\n" || neu[j] == "\n" {
-				if alt[i] == "\n" {
-					out = append(out, BoldRed+"-newline-"+alt[i]+Reset, BoldGreen+neu[j]+Reset)
+			if alt[i] == '\n' || neu[j] == '\n' {
+				if alt[i] == '\n' {
+					out = append(out, returnByteSum(BoldRed, newLine, []byte{alt[i]}, Reset, BoldGreen, []byte{neu[j]}, Reset)...)
 				}
-				if neu[j] == "\n" {
-					out = append(out, BoldRed+alt[i]+Reset, BoldGreen+"-newline-"+neu[j]+Reset)
+				if neu[j] == '\n' {
+					out = append(out, returnByteSum(BoldRed, []byte{alt[i]}, Reset, BoldGreen, newLine, []byte{neu[j]}, Reset)...)
 				}
 			} else {
-				out = append(out, BoldRed+alt[i]+Reset, BoldGreen+neu[j]+Reset)
+				out = append(out, returnByteSum(BoldRed, []byte{alt[i]}, Reset, BoldGreen, []byte{neu[j]}, Reset)...)
 			}
 
 			i++
@@ -59,5 +62,5 @@ func ColourTheDiffs(oldStr, newStr string, actions []Action) string {
 		}
 	}
 
-	return strings.Join(out, "")
+	return out
 }
