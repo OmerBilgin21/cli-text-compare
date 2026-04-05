@@ -28,7 +28,6 @@ var (
 	BoldRed   = []byte("\033[1;31m")
 	BoldGreen = []byte("\033[1;32m")
 	Reset     = []byte("\033[0m")
-	Width     = 50
 )
 
 func readOrExit(path string) ([]byte, error) {
@@ -41,7 +40,7 @@ func readOrExit(path string) ([]byte, error) {
 	return data, nil
 }
 
-func TextCompare(fileMode bool, filePathOne, filePathTwo *string) error {
+func TextCompare(fileMode bool, filePathOne, filePathTwo *string, diffWidth int) error {
 	if fileMode {
 		fileOne, err := readOrExit(*filePathOne)
 		if err != nil {
@@ -60,7 +59,7 @@ func TextCompare(fileMode bool, filePathOne, filePathTwo *string) error {
 			return nil
 		}
 
-		RenderDiff(fileOne, fileTwo, actions)
+		RenderDiff(fileOne, fileTwo, actions, diffWidth)
 		return nil
 	}
 
@@ -83,6 +82,6 @@ func TextCompare(fileMode bool, filePathOne, filePathTwo *string) error {
 		return nil
 	}
 
-	RenderDiff(inputOne, inputTwo, actions)
+	RenderDiff(inputOne, inputTwo, actions, diffWidth)
 	return nil
 }

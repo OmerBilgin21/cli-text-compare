@@ -68,21 +68,22 @@ func colourTheDiffs(alt, neu []byte, actions []Action) ([]byte, []byte) {
 	return oldOut, newOut
 }
 
-func RenderDiff(oldThingy, newThingy []byte, actions []Action) {
+func RenderDiff(oldThingy, newThingy []byte, actions []Action, width int) {
 	oldOut, newOut := colourTheDiffs(oldThingy, newThingy, actions)
 
 	top := lipgloss.NewStyle().
-		Width(101).
+		Width((width*2)+1).
 		Border(lipgloss.NormalBorder(), true, true, true, true).
 		Render("Result: ")
 
 	left := lipgloss.NewStyle().
-		Width(50).
+		Width(width).
 		BorderRight(true).
 		BorderStyle(lipgloss.NormalBorder()).
 		Render(string(oldOut))
 
-	right := lipgloss.NewStyle().Width(50).Render(string(newOut))
+	right := lipgloss.NewStyle().
+		Width(width).Render(string(newOut))
 
 	joined := lipgloss.JoinHorizontal(lipgloss.Center, left, right)
 
