@@ -6,20 +6,6 @@ import (
 	"slices"
 )
 
-type Matrix [][]int
-
-type Action string
-
-const (
-	ActionDelete     Action = "delete"
-	ActionInsert     Action = "insert"
-	ActionSubstitute Action = "substitute"
-	ActionMatch      Action = "match"
-	ActionAbove             = ActionDelete
-	ActionLeft              = ActionInsert
-	ActionTopLeft           = ActionSubstitute
-)
-
 func min(x, y, z int) int {
 	return int(math.Min(math.Min(float64(x), float64(y)), float64(z)))
 }
@@ -49,25 +35,8 @@ func calculateCost(i, j int, a, b []byte, matrix Matrix) int {
 	return min(above, left, topLeft)
 }
 
-func reconcileTheLostDelimiter(inputOne, inputTwo [][]byte, separator []byte) ([][]byte, [][]byte) {
-	for i, bytesArr := range inputOne {
-		if len(inputOne)-1 != i {
-			inputOne[i] = append(bytesArr, separator...)
-		}
-	}
-
-	for i, bytesArr := range inputTwo {
-		if len(inputTwo)-1 != i {
-			inputTwo[i] = append(bytesArr, separator...)
-		}
-	}
-
-	return inputOne, inputTwo
-}
-
 func Diff(oldInput []byte, newInput []byte) []Action {
-	separator := []byte("\n")
-	oldLines, newLines := bytes.SplitAfter(oldInput, separator), bytes.SplitAfter(newInput, separator)
+	oldLines, newLines := bytes.SplitAfter(oldInput, Separator), bytes.SplitAfter(newInput, Separator)
 	arrCtr := math.Max(float64(len(oldLines)), float64(len(newLines)))
 
 	var actions []Action
