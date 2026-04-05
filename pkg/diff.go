@@ -35,7 +35,7 @@ func calculateCost(i, j int, a, b []byte, matrix Matrix) int {
 	return min(above, left, topLeft)
 }
 
-func Diff(oldInput []byte, newInput []byte) []Action {
+func Diff(oldInput []byte, newInput []byte, diffOnly bool) []Action {
 	oldLines, newLines := bytes.SplitAfter(oldInput, Separator), bytes.SplitAfter(newInput, Separator)
 	arrCtr := math.Max(float64(len(oldLines)), float64(len(newLines)))
 
@@ -64,9 +64,12 @@ func Diff(oldInput []byte, newInput []byte) []Action {
 		}
 
 		if slices.Equal(oldLines[i], newLines[i]) {
-			// here, lines are the same, so we should just add the
-			// character count amount of "ActionMatch"s into the actions array
-			actions = append(actions, slices.Repeat([]Action{ActionMatch}, len(oldLines[i]))...)
+			if !diffOnly {
+				// here, lines are the same, so we should just add the
+				// character count amount of "ActionMatch"s into the actions array
+				actions = append(actions, slices.Repeat([]Action{ActionMatch}, len(oldLines[i]))...)
+			}
+
 		} else {
 			actions = append(actions, levenshtein(oldLines[i], newLines[i])...)
 		}

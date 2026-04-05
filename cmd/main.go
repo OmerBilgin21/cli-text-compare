@@ -17,6 +17,7 @@ func main() {
 	usage := "Run the tool either with --stdin or with --file arguments to get the diff of two things.\nIf you pass no flags, blank comparison mode (--stdin) will run\nTo change the width of the rendered diffs, pass --diff-width X\n"
 
 	fileMode := flag.Bool("file", false, fileModUsage)
+	diffOnly := flag.Bool("diff-only", false, diffOnlyUsage)
 	diffWidth := flag.Int("diff-width", 50, diffWidthUsage)
 	flag.Bool("help", false, usage)
 	flag.Bool("stdin", false, stdinUsage)
@@ -41,6 +42,11 @@ func main() {
 				fmt.Println(diffWidthUsage)
 				os.Exit(0)
 			}
+			if strings.Contains(arg, "diff-only") {
+				flagHelpWasAsked = true
+				fmt.Println(diffOnlyUsage)
+				os.Exit(0)
+			}
 		}
 
 		if !flagHelpWasAsked {
@@ -58,7 +64,7 @@ func main() {
 			os.Exit(1)
 		}
 
-		err := pkg.Compare(*fileMode, &flag.Args()[0], &flag.Args()[1], *diffWidth)
+		err := pkg.Compare(*fileMode, &flag.Args()[0], &flag.Args()[1], *diffWidth, *diffOnly, *noNewlineDelimiter)
 
 		if err != nil {
 			fmt.Printf("error while diffing: %+v", err)
@@ -68,7 +74,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	err := pkg.Compare(*fileMode, nil, nil, *diffWidth)
+	err := pkg.Compare(*fileMode, nil, nil, *diffWidth, *diffOnly, *noNewlineDelimiter)
 
 	if err != nil {
 		fmt.Printf("error while diffing: %+v", err)

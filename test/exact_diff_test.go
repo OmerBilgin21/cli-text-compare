@@ -10,7 +10,7 @@ func TestExactDiff(t *testing.T) {
 	textOne := []byte("selam\nnaber\nnasilsin")
 	textTwo := []byte("sekam\nna\nnasilsin")
 
-	actions := pkg.Diff(textOne, textTwo)
+	actions := pkg.Diff(textOne, textTwo, false)
 
 	knownActionsArr := []pkg.Action{
 		"match", "match", "substitute", "match", "match", "match", "match", "match", "delete", "delete", "delete", "match", "match", "match", "match", "match", "match", "match", "match", "match",

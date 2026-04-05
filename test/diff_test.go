@@ -125,7 +125,7 @@ func TestDiff(t *testing.T) {
 			newContent := readFile(t, tc.newFile)
 
 			start := time.Now()
-			actions := pkg.Diff(oldContent, newContent)
+			actions := pkg.Diff(oldContent, newContent, false)
 			elapsed := time.Since(start)
 			t.Logf("Diff took %v ms", elapsed.Milliseconds())
 

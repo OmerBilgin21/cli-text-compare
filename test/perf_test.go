@@ -12,7 +12,7 @@ func TestPerformanceOfDiff(t *testing.T) {
 	textTwo := readFile(t, "./perf_two.json")
 
 	start := time.Now()
-	actions := pkg.Diff(textOne, textTwo)
+	actions := pkg.Diff(textOne, textTwo, false)
 	elapsed := time.Since(start)
 	t.Logf("Diff took %v ms", elapsed.Milliseconds())
 

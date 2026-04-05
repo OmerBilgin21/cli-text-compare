@@ -40,7 +40,7 @@ func readOrExit(path string) ([]byte, error) {
 	return data, nil
 }
 
-func Compare(fileMode bool, filePathOne, filePathTwo *string, diffWidth int) error {
+func Compare(fileMode bool, filePathOne, filePathTwo *string, diffWidth int, diffOnly, noNewlineDelim bool) error {
 	if fileMode {
 		fileOne, err := readOrExit(*filePathOne)
 		if err != nil {
@@ -52,7 +52,7 @@ func Compare(fileMode bool, filePathOne, filePathTwo *string, diffWidth int) err
 			return err
 		}
 
-		actions := Diff(fileOne, fileTwo)
+		actions := Diff(fileOne, fileTwo, diffOnly)
 
 		if slices.Compare(actions, slices.Repeat([]Action{ActionMatch}, len(actions))) == 0 {
 			fmt.Println("\nthe texts are the same")
@@ -75,7 +75,7 @@ func Compare(fileMode bool, filePathOne, filePathTwo *string, diffWidth int) err
 		return err
 	}
 
-	actions := Diff(inputOne, inputTwo)
+	actions := Diff(inputOne, inputTwo, diffOnly)
 
 	if slices.Compare(actions, slices.Repeat([]Action{ActionMatch}, len(actions))) == 0 {
 		fmt.Println("\nthe texts are the same")
