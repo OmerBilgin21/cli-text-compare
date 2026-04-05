@@ -40,7 +40,7 @@ func readOrExit(path string) ([]byte, error) {
 	return data, nil
 }
 
-func TextCompare(fileMode bool, filePathOne, filePathTwo *string, diffWidth int) error {
+func Compare(fileMode bool, filePathOne, filePathTwo *string, diffWidth int) error {
 	if fileMode {
 		fileOne, err := readOrExit(*filePathOne)
 		if err != nil {

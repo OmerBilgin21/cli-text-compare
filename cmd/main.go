@@ -58,7 +58,7 @@ func main() {
 			os.Exit(1)
 		}
 
-		err := pkg.TextCompare(*fileMode, &flag.Args()[0], &flag.Args()[1], *diffWidth)
+		err := pkg.Compare(*fileMode, &flag.Args()[0], &flag.Args()[1], *diffWidth)
 
 		if err != nil {
 			fmt.Printf("error while diffing: %+v", err)
@@ -68,7 +68,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	err := pkg.TextCompare(*fileMode, nil, nil, *diffWidth)
+	err := pkg.Compare(*fileMode, nil, nil, *diffWidth)
 
 	if err != nil {
 		fmt.Printf("error while diffing: %+v", err)
