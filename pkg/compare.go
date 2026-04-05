@@ -59,7 +59,7 @@ func Compare(fileMode bool, filePathOne, filePathTwo *string, diffWidth int, dif
 			return nil
 		}
 
-		RenderDiff(fileOne, fileTwo, actions, diffWidth)
+		RenderDiff(fileOne, fileTwo, actions, diffWidth, noNewlineDelim)
 		return nil
 	}
 
@@ -82,6 +82,6 @@ func Compare(fileMode bool, filePathOne, filePathTwo *string, diffWidth int, dif
 		return nil
 	}
 
-	RenderDiff(inputOne, inputTwo, actions, diffWidth)
+	RenderDiff(inputOne, inputTwo, actions, diffWidth, noNewlineDelim)
 	return nil
 }

@@ -18,6 +18,7 @@ func main() {
 
 	fileMode := flag.Bool("file", false, fileModUsage)
 	diffOnly := flag.Bool("diff-only", false, diffOnlyUsage)
+	noNewlineDelimiter := flag.Bool("omit-newline-delimiter", false, omitNewlineDelimiter)
 	diffWidth := flag.Int("diff-width", 50, diffWidthUsage)
 	flag.Bool("help", false, usage)
 	flag.Bool("stdin", false, stdinUsage)
@@ -42,6 +43,7 @@ func main() {
 				fmt.Println(diffWidthUsage)
 				os.Exit(0)
 			}
+
 			if strings.Contains(arg, "diff-only") {
 				flagHelpWasAsked = true
 				fmt.Println(diffOnlyUsage)
@@ -50,7 +52,7 @@ func main() {
 		}
 
 		if !flagHelpWasAsked {
-			fmt.Printf(usage)
+			fmt.Println(usage)
 			os.Exit(0)
 		}
 	}

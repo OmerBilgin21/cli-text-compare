@@ -14,7 +14,7 @@ func returnByteSum(args ...[]byte) []byte {
 	return sum
 }
 
-func colourTheDiffs(alt, neu []byte, actions []Action) ([]byte, []byte) {
+func colourTheDiffs(alt, neu []byte, actions []Action, noNewlineDelim bool) ([]byte, []byte) {
 	i, j := 0, 0
 	var oldOut []byte
 	var newOut []byte
@@ -29,14 +29,14 @@ func colourTheDiffs(alt, neu []byte, actions []Action) ([]byte, []byte) {
 			i++
 			j++
 		case ActionDelete:
-			if alt[i] == '\n' {
+			if !noNewlineDelim && alt[i] == '\n' {
 				oldOut = append(oldOut, returnByteSum(Red, newLine, []byte{alt[i]}, Reset)...)
 			} else {
 				oldOut = append(oldOut, returnByteSum(Red, []byte{alt[i]}, Reset)...)
 			}
 			i++
 		case ActionInsert:
-			if neu[j] == '\n' {
+			if !noNewlineDelim && neu[j] == '\n' {
 				newOut = append(newOut, returnByteSum(Green, newLine, []byte{neu[j]}, Reset)...)
 			} else {
 				newOut = append(newOut, returnByteSum(Green, []byte{neu[j]}, Reset)...)
@@ -46,8 +46,7 @@ func colourTheDiffs(alt, neu []byte, actions []Action) ([]byte, []byte) {
 			// well I used BoldRed and BoldGreen for showing
 			// substitute old and substitute new changes
 			// but it's not the best to say the least, open for ideas
-
-			if alt[i] == '\n' || neu[j] == '\n' {
+			if !noNewlineDelim && (alt[i] == '\n' || neu[j] == '\n') {
 				if alt[i] == '\n' {
 					oldOut = append(oldOut, returnByteSum(BoldRed, newLine, []byte{alt[i]}, Reset)...)
 					newOut = append(newOut, returnByteSum(BoldGreen, []byte{neu[j]}, Reset)...)
@@ -69,8 +68,8 @@ func colourTheDiffs(alt, neu []byte, actions []Action) ([]byte, []byte) {
 	return oldOut, newOut
 }
 
-func RenderDiff(oldThingy, newThingy []byte, actions []Action, width int) {
-	oldOut, newOut := colourTheDiffs(oldThingy, newThingy, actions)
+func RenderDiff(oldThingy, newThingy []byte, actions []Action, width int, noNewlineDelim bool) {
+	oldOut, newOut := colourTheDiffs(oldThingy, newThingy, actions, noNewlineDelim)
 
 	top := lipgloss.NewStyle().
 		Width((width*2)+1).
