@@ -7,8 +7,8 @@ import (
 )
 
 func TestExactDiff(t *testing.T) {
-	textOne := "selam\nnaber\nnasilsin"
-	textTwo := "sekam\nna\nnasilsin"
+	textOne := []byte("selam\nnaber\nnasilsin")
+	textTwo := []byte("sekam\nna\nnasilsin")
 
 	actions := pkg.Diff(textOne, textTwo)
 

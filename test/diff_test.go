@@ -3,18 +3,17 @@ package test
 import (
 	"cli-text-compare/pkg"
 	"os"
-	"strings"
 	"testing"
 	"time"
 )
 
-func readFile(t *testing.T, path string) string {
+func readFile(t *testing.T, path string) []byte {
 	t.Helper()
 	data, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatalf("failed to read %s: %v", path, err)
 	}
-	return string(data)
+	return data
 }
 
 func TestDiff(t *testing.T) {
@@ -125,25 +124,14 @@ func TestDiff(t *testing.T) {
 			oldContent := readFile(t, tc.oldFile)
 			newContent := readFile(t, tc.newFile)
 
-			oldChars := strings.Split(oldContent, "")
-			newChars := strings.Split(newContent, "")
-
-			// Filter out the empty string that Split produces for empty input.
-			if oldContent == "" {
-				oldChars = nil
-			}
-			if newContent == "" {
-				newChars = nil
-			}
-
 			start := time.Now()
 			actions := pkg.Diff(oldContent, newContent)
 			elapsed := time.Since(start)
 			t.Logf("Diff took %v ms", elapsed.Milliseconds())
 
 			// Universal Levenshtein invariant:
-			//   matches + substitutes + deletes == len(oldChars)
-			//   matches + substitutes + inserts == len(newChars)
+			//   matches + substitutes + deletes == len(oldContent)
+			//   matches + substitutes + inserts == len(newContent)
 			var nMatch, nInsert, nDelete, nSub int
 			for _, a := range actions {
 				switch a {
@@ -157,11 +145,11 @@ func TestDiff(t *testing.T) {
 					nSub++
 				}
 			}
-			if got := nMatch + nSub + nDelete; got != len(oldChars) {
-				t.Errorf("matches+substitutes+deletes = %d, want len(old) = %d", got, len(oldChars))
+			if got := nMatch + nSub + nDelete; got != len(oldContent) {
+				t.Errorf("matches+substitutes+deletes = %d, want len(old) = %d", got, len(oldContent))
 			}
-			if got := nMatch + nSub + nInsert; got != len(newChars) {
-				t.Errorf("matches+substitutes+inserts = %d, want len(new) = %d", got, len(newChars))
+			if got := nMatch + nSub + nInsert; got != len(newContent) {
+				t.Errorf("matches+substitutes+inserts = %d, want len(new) = %d", got, len(newContent))
 			}
 
 			// All-match: identical content produces no edits.
@@ -170,8 +158,8 @@ func TestDiff(t *testing.T) {
 					t.Errorf("expected all matches but got %d inserts, %d deletes, %d substitutes",
 						nInsert, nDelete, nSub)
 				}
-				if nMatch != len(oldChars) {
-					t.Errorf("got %d matches, want %d", nMatch, len(oldChars))
+				if nMatch != len(oldContent) {
+					t.Errorf("got %d matches, want %d", nMatch, len(oldContent))
 				}
 			}
 
@@ -181,8 +169,8 @@ func TestDiff(t *testing.T) {
 					t.Errorf("expected all inserts but got %d matches, %d deletes, %d substitutes",
 						nMatch, nDelete, nSub)
 				}
-				if nInsert != len(newChars) {
-					t.Errorf("got %d inserts, want %d", nInsert, len(newChars))
+				if nInsert != len(newContent) {
+					t.Errorf("got %d inserts, want %d", nInsert, len(newContent))
 				}
 			}
 
@@ -192,14 +180,14 @@ func TestDiff(t *testing.T) {
 					t.Errorf("expected all deletes but got %d matches, %d inserts, %d substitutes",
 						nMatch, nInsert, nSub)
 				}
-				if nDelete != len(oldChars) {
-					t.Errorf("got %d deletes, want %d", nDelete, len(oldChars))
+				if nDelete != len(oldContent) {
+					t.Errorf("got %d deletes, want %d", nDelete, len(oldContent))
 				}
 			}
 
 			// For non-identical, non-empty pairs: verify the diff actually contains edits.
 			if !tc.expectAllMatch && !tc.expectAllInsert && !tc.expectAllDelete {
-				if len(oldChars) > 0 && len(newChars) > 0 && nInsert+nDelete+nSub == 0 {
+				if len(oldContent) > 0 && len(newContent) > 0 && nInsert+nDelete+nSub == 0 {
 					t.Errorf("expected some edits between different files but got all matches")
 				}
 			}
