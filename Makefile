@@ -5,7 +5,7 @@ BIN_DIR  = ./bin
 .PHONY: clean test
 
 test:
-	go test ./test/ -v
+	go test -v ./test/
 
 all: clean build zip
 
