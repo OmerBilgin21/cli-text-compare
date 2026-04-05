@@ -7,55 +7,82 @@ import (
 	"slices"
 )
 
-func readOrExit(path string) []byte {
+type Matrix [][]int
+
+type Action string
+
+const (
+	ActionDelete     Action = "delete"
+	ActionInsert     Action = "insert"
+	ActionSubstitute Action = "substitute"
+	ActionMatch      Action = "match"
+	ActionAbove             = ActionDelete
+	ActionLeft              = ActionInsert
+	ActionTopLeft           = ActionSubstitute
+)
+
+var (
+	Separator = []byte("\n")
+	Red       = []byte("\033[31m")
+	Green     = []byte("\033[32m")
+	BoldRed   = []byte("\033[1;31m")
+	BoldGreen = []byte("\033[1;32m")
+	Reset     = []byte("\033[0m")
+	Width     = 50
+)
+
+func readOrExit(path string) ([]byte, error) {
 	data, err := os.ReadFile(path)
 
 	if err != nil {
-		fmt.Printf(string(Red)+"error while reading the file: %+v\n", err)
-		os.Exit(1)
+		return nil, fmt.Errorf(string(Red)+"error while reading the file: %+v\n", err)
 	}
 
-	return data
+	return data, nil
 }
 
-func TextCompare(fileMode bool, filePathOne, filePathTwo *string) {
+func TextCompare(fileMode bool, filePathOne, filePathTwo *string) error {
 	if fileMode {
-		fileOne := readOrExit(*filePathOne)
-		fileTwo := readOrExit(*filePathTwo)
+		fileOne, err := readOrExit(*filePathOne)
+		if err != nil {
+			return err
+		}
+
+		fileTwo, err := readOrExit(*filePathTwo)
+		if err != nil {
+			return err
+		}
 
 		actions := Diff(fileOne, fileTwo)
 
 		if slices.Compare(actions, slices.Repeat([]Action{ActionMatch}, len(actions))) == 0 {
 			fmt.Println("\nthe texts are the same")
-			return
+			return nil
 		}
 
-		colored := ColourTheDiffs(fileOne, fileTwo, actions)
-		fmt.Println("\nresult:")
-		fmt.Printf(string(colored))
-		return
+		RenderDiff(fileOne, fileTwo, actions)
+		return nil
 	}
 
 	fmt.Println("Enter the old string, Press Ctrl+D (or Ctrl+Z then Enter on Windows) to move on to the new string:")
 	inputOne, err := io.ReadAll(os.Stdin)
+
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	inputTwo, err := io.ReadAll(os.Stdin)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	actions := Diff(inputOne, inputTwo)
 
 	if slices.Compare(actions, slices.Repeat([]Action{ActionMatch}, len(actions))) == 0 {
 		fmt.Println("\nthe texts are the same")
-		return
+		return nil
 	}
 
-	colored := ColourTheDiffs(inputOne, inputTwo, actions)
-
-	fmt.Println("\nresult:")
-	fmt.Printf(string(colored))
+	RenderDiff(inputOne, inputTwo, actions)
+	return nil
 }
