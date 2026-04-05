@@ -23,8 +23,9 @@ func colourTheDiffs(alt, neu []byte, actions []Action) ([]byte, []byte) {
 	for _, action := range actions {
 		switch action {
 		case ActionMatch:
+
 			oldOut = append(oldOut, alt[i])
-			newOut = append(newOut, alt[i])
+			newOut = append(newOut, neu[j])
 			i++
 			j++
 		case ActionDelete:
