@@ -18,3 +18,5 @@ Available flags:
 
 
 Grab the binaries from releases tab or build it yourself using `go build -o clidiff ./cmd/main.go` or `make build`
+
+test change
