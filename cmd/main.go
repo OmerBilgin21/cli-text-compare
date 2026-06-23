@@ -9,6 +9,8 @@ import (
 	"strings"
 )
 
+// asdasd
+
 func main() {
 	args := os.Args[1:]
 	fileModUsage := "usage: clidiff --file ./relative/path.json /absolute/path.json, to have clidiff read your inputs from existing files on your system."
